@@ -1,4 +1,4 @@
--- 1.a Generalize this function so we 
+-- 1.a Generalize this function so we
 --     use different orderings on integers
 --     (e.g., ascending/descending)
 
@@ -12,10 +12,11 @@ insertAsc, insertDes :: [Int] -> Int -> [Int]
 insertAsc = insert (<)
 insertDes = insert (>)
 
--- 1.b Generalize this function so we 
+-- 1.b Generalize this function so we
 --     use different types of elements.
 --     (e.g., Float, String)
 
+--Ord type class ,any type 'a' that has an instance of a Ord type class works for this definition
 insert' :: Ord a => [a] -> a -> [a]
 insert' []     y = [y]
 insert' (x:xs) y
@@ -24,6 +25,7 @@ insert' (x:xs) y
 
 isort :: (Ord a) => [a] -> [a]
 isort l = foldr (\ x xs -> insert' xs x) [] l
+--isort l = foldr (flip insert') [] l
 
 data MyInt = MyInt Int
 
@@ -31,12 +33,12 @@ instance Eq MyInt where
   MyInt n1 == MyInt n2  =  n1 == n2
 
 instance Ord MyInt where
-  MyInt n1 <= MyInt n2  =  n1 >= n2 
+  MyInt n1 <= MyInt n2  =  n1 >= n2
 
 instance Show MyInt where
   show (MyInt n) = "MyInt " ++ show n
 
--- 2.a Make a datatype for pets. There are 
+-- 2.a Make a datatype for pets. There are
 --     three kinds of pets: mice, dogs, elephants.
 
 data Pet = Mouse | Dog | Elephant
@@ -55,10 +57,11 @@ instance Eq Pet where
   Elephant == Elephant = True
   _        == _        = False
 
+-- :info Ord : check class info, minimal implementation for Ord class: <=
 instance Ord Pet where
-  Mouse <= _ = True
-  _     <= Elephant = True
-  p1    <= p2       = p1 == p2
+  Mouse <= _        = True -- cover 3 cases: mouse <=mouse, mouse <= dog, mouse <= elephant
+  _     <= Elephant = True -- cover 3 cases: mouse <= elephant, dog <= elephant, elephant <= elephant
+  p1    <= p2       = p1 == p2 -- if p1==p2,then true, 3 cases: mouse ==mouse ,...
 
 -- 3.a Create a datatype for 2-d points ℕ×ℕ
 
@@ -70,7 +73,7 @@ instance Eq Point where
   MkP x1 y1 == MkP x2 y2  =  x1 == x2 && y1 == y2
 
 instance Ord Point where
-  MkP x1 y1 <= MkP x2 y2  =  x1 < x2 || (x1 == x2 && y1 <= y2) 
+  MkP x1 y1 <= MkP x2 y2  =  x1 < x2 || (x1 == x2 && y1 <= y2)
 
 instance Show Point where
   show (MkP x y) = "(" ++ show x ++ "," ++ show y ++ ")"
@@ -82,7 +85,7 @@ instance Show Point where
 --     -- a variable (with some name)
 --     -- an addition of two subexpressions
 
-data Expr = Const Int | Var String | Add Expr Expr 
+data Expr = Const Int | Var String | Add Expr Expr
 
 -- 4.b Write a Show instance for this datatype.
 
@@ -104,4 +107,4 @@ eval env (Var x) = env x
 --     [(String,Int)]
 --     [("x",5)]
 
--- 5. Make a datatype to represent a trie datastructure.
+-- 5. Make a datatype to represent a trie data structure.
