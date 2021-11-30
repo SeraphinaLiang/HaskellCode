@@ -95,11 +95,13 @@ instance Show Expr where
   show (Add e1 e2) = show e1 ++ " + " ++ show e2
 
 -- 4.c Write an evaluation function.
-
+-- env: environment that convert variable string to int
 eval :: (String -> Int) -> Expr -> Int
 eval env (Const n) = n
 eval env (Add e1 e2) = eval env e1 + eval env e2
 eval env (Var x) = env x
+
+-- eval (\_ -> 5) (Add (Const 42) (Var "x"))
 
 -- HOMEWORK:
 
@@ -108,3 +110,5 @@ eval env (Var x) = env x
 --     [("x",5)]
 
 -- 5. Make a datatype to represent a trie data structure.
+
+data Trie = Trie Int Int Int
