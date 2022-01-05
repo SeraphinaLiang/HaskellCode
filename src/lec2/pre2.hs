@@ -7,7 +7,6 @@ length' = foldr' add 0 where
    add::Int->Int->Int
    add x len = len+1
 
-
 any' :: (Int -> Bool) -> [Int] -> Bool
 any' p= foldr' decide False where
   decide::Int->Bool->Bool

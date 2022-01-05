@@ -50,7 +50,7 @@ split' l = foldr c n l where
 
 tuple :: [a] -> (b -> [(a,b)])   --return a function that take in b
 tuple []       = \ y ->  []
-tuple (x:xs)   = \ y ->  (x,y) : tuple xs y
+tuple (x:xs)   = \ y ->  (x,y) : tuple xs y --tuple xs返回一个函数，y作为参数
 
 tuple' :: [a] -> (b -> [(a,b)])
 tuple' l = foldr c n l where
