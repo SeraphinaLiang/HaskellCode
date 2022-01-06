@@ -19,7 +19,7 @@ example :: HtmlElement
 example =
   HtmlTag "a" [MkAttr "href" "https://www.kuleuven.be/kuleuven/"]
     [HtmlString "KU Leuven"]
-    
+
 -- The encoding of the following unordered list as an HtmlElement
 --   <ul>
 --   <li>Apples</li>
@@ -27,7 +27,10 @@ example =
 --   <li>Oranges</li>
 --   </ul>
 exampleUL :: HtmlElement
-exampleUL = HtmlTag "ul" [] [HtmlTag "li" [] [HtmlString "Apples"],HtmlTag "li" [] [HtmlString "Bananas"],HtmlTag "li" [] [HtmlString "Oranges"]]
+exampleUL = HtmlTag "ul" [] [HtmlTag "li" [] [HtmlString "Apples"],
+                             HtmlTag "li" [] [HtmlString "Bananas"],
+                             HtmlTag "li" [] [HtmlString "Oranges"]
+                             ]
 
 -- HTML renderable class.
 class HTML a where
@@ -43,7 +46,8 @@ instance HTML Link where
   toHtml (Link hrf txt) = HtmlTag "a" [MkAttr "href" hrf] [HtmlString txt]
 
 ul :: HtmlElements -> HtmlElement
-ul = HtmlTag "ul" []
+ul = HtmlTag "ul" [] --省略了参数
+--ul list = HtmlTag "ul" [] list
 
 li :: HtmlElement -> HtmlElement
 li e = HtmlTag "li" [] [e]
@@ -108,7 +112,7 @@ myAddressBook =
 br :: HtmlElement
 br     =  HtmlTag "br" [] []
 
-html, body, tr, td, h2, h3 :: HtmlElements -> HtmlElement
+html, body, tr, td, h2, h3 :: HtmlElements -> HtmlElement  --省略参数
 html   =  HtmlTag "html" []
 body   =  HtmlTag "body" []
 tr     =  HtmlTag "tr" []
@@ -129,7 +133,7 @@ emptyRow = tr [ td [ br ] ]
 
 -- HTML instances
 instance HTML Kind where
-  toHtml k = HtmlString $ show k
+  toHtml k = HtmlString $ show k  -- show k : 把 k 变成 String
 
 instance HTML Address where
   toHtml (Address kind street code city country) =
