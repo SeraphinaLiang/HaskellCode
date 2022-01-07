@@ -1,7 +1,7 @@
 module Template where
 
 import Data.Char
-import Data.List (delete,partition)
+import Data.List (delete,partition,permutations)
 
 -- * Sequences
 -- ----------------------------------------------------------------------------
@@ -221,8 +221,13 @@ amountsEuro = [1, 2, 5, 10, 20, 50, 100, 200]
 changesEuro :: Int -> [[Int]]
 changesEuro = changes amountsEuro
 
+----------------不会-----------------
 changes :: [Int] -> Int -> [[Int]]
-changes = error "Not implemented"
+changes _ 0 = [[]]
+changes [] _ = []
+changes (x:xs) sum =
+  if x > sum then changes xs sum
+  else [x:l | l <- changes (x:xs) (sum-x)] ++ changes xs sum
 
 amountsEuroRev :: [Int]
 amountsEuroRev = reverse amountsEuro
