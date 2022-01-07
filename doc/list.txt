@@ -1,0 +1,122 @@
+(++) :: [a] -> [a] -> [a]
+Append two lists, i.e.,
+
+head :: [a] -> a
+Extract the first element of a list, which must be non-empty.
+
+last :: [a] -> a
+Extract the last element of a list, which must be finite and non-empty.
+
+tail :: [a] -> [a]
+Extract the elements after the head of a list, which must be non-empty.
+
+init :: [a] -> [a]
+Return all the elements of a list except the last one. The list must be non-empty.
+
+null :: [a] -> Bool
+Test whether a list is empty.
+
+length :: [a] -> Int
+O(n). length returns the length of a finite list as an Int.
+It is an instance of the more general genericLength, the result type of which may be any kind of number.
+
+map :: (a -> b) -> [a] -> [b]
+map f xs is the list obtained by applying f to each element of xs, i.e.,
+ map f [x1, x2, ..., xn] == [f x1, f x2, ..., f xn]
+ map f [x1, x2, ...] == [f x1, f x2, ...]
+
+reverse :: [a] -> [a]
+reverse xs returns the elements of xs in reverse order. xs must be finite.
+
+intersperse :: a -> [a] -> [a]
+The intersperse function takes an element and a list and `intersperses' that element between the elements of the list.
+ For example, intersperse ',' "abcde" == "a,b,c,d,e"
+
+intercalate :: [a] -> [[a]] -> [a]
+intercalate xs xss is equivalent to (concat (intersperse xs xss)). It inserts the list xs in between the lists in xss and concatenates the result.
+
+transpose :: [[a]] -> [[a]]
+The transpose function transposes the rows and columns of its argument. For example,
+ transpose [[1,2,3],[4,5,6]] == [[1,4],[2,5],[3,6]]
+
+subsequences :: [a] -> [[a]]
+The subsequences function returns the list of all subsequences of the argument.
+ subsequences "abc" == ["","a","b","ab","c","ac","bc","abc"]
+
+permutations :: [a] -> [[a]]
+The permutations function returns the list of all permutations of the argument.
+ permutations "abc" == ["abc","bac","cba","bca","cab","acb"]
+
+foldl :: (a -> b -> a) -> a -> [b] -> a
+foldl        :: (a -> b -> a) -> a -> [b] -> a
+foldl f z0 xs0 = lgo z0 xs0
+             where
+                lgo z []     =  z
+                lgo z (x:xs) = lgo (f z x) xs
+
+foldr :: (a -> b -> b) -> b -> [a] -> b
+foldr            :: (a -> b -> b) -> b -> [a] -> b
+-- foldr _ z []     =  z
+-- foldr f z (x:xs) =  f x (foldr f z xs)
+foldr k z = go
+          where
+            go []     = z
+            go (y:ys) = y `k` go ys
+
+
+
+concat :: [[a]] -> [a]
+Concatenate a list of lists.
+
+concatMap :: (a -> [b]) -> [a] -> [b]
+Map a function over a list and concatenate the results.
+
+and :: [Bool] -> Bool
+and returns the conjunction of a Boolean list. For the result to be True, the list must be finite; False, however, results from a False value at a finite index of a finite or infinite list.
+
+or :: [Bool] -> Bool
+or returns the disjunction of a Boolean list. For the result to be False, the list must be finite; True, however, results from a True value at a finite index of a finite or infinite list.
+
+any :: (a -> Bool) -> [a] -> Bool
+Applied to a predicate and a list, any determines if any element of the list satisfies the predicate. For the result to be False, the list must be finite; True, however, results from a True value for the predicate applied to an element at a finite index of a finite or infinite list.
+
+all :: (a -> Bool) -> [a] -> Bool
+Applied to a predicate and a list, all determines if all elements of the list satisfy the predicate. For the result to be True, the list must be finite; False, however, results from a False value for the predicate applied to an element at a finite index of a finite or infinite list.
+
+sum :: Num a => [a] -> a
+The sum function computes the sum of a finite list of numbers.
+
+product :: Num a => [a] -> a
+The product function computes the product of a finite list of numbers.
+
+maximum :: Ord a => [a] -> a
+maximum returns the maximum value from a list, which must be non-empty, finite, and of an ordered type. It is a special case of maximumBy, which allows the programmer to supply their own comparison function.
+
+minimum :: Ord a => [a] -> a
+minimum returns the minimum value from a list, which must be non-empty, finite, and of an ordered type. It is a special case of minimumBy, which allows the programmer to supply their own comparison function.
+
+iterate :: (a -> a) -> a -> [a]
+iterate f x returns an infinite list of repeated applications of f to x:
+ iterate f x == [x, f x, f (f x), ...]
+
+repeat :: a -> [a]
+repeat x is an infinite list, with x the value of every element.
+
+replicate :: Int -> a -> [a]
+replicate n x is a list of length n with x the value of every element. It is an instance of the more general genericReplicate, in which n may be of any integral type.
+
+cycle :: [a] -> [a]
+cycle ties a finite list into a circular one, or equivalently, the infinite repetition of the original list. It is the identity on infinite lists.
+
+find :: (a -> Bool) -> [a] -> Maybe a
+The find function takes a predicate and a list and returns the first element in the list matching the predicate, or Nothing if there is no such element.
+
+filter :: (a -> Bool) -> [a] -> [a]
+filter, applied to a predicate and a list, returns the list of those elements that satisfy the predicate;
+i.e.,filter p xs = [ x | x <- xs, p x]
+
+partition :: (a -> Bool) -> [a] -> ([a], [a])
+The partition function takes a predicate a list and returns the pair of lists of elements which do and do not satisfy the predicate, respectively;
+i.e.,partition p xs == (filter p xs, filter (not . p) xs)
+
+

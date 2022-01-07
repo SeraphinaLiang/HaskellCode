@@ -59,3 +59,9 @@ The readIO function is similar to read except that it signals parse failure to t
 
 6.    readLn :: Read a => IO a
 The readLn function combines getLine and readIO.
+
+------------tips-----------
+
+anything -> String :   show a
+String   -> Values :   read s
+

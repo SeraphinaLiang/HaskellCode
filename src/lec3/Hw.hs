@@ -1,5 +1,5 @@
 module Template where
-import Data.Char (chr)
+import Data.Char
 
 ---------------------Tree Folds------------------------
 data Tree a = Leaf a | Fork (Tree a) (Tree a)
@@ -47,6 +47,11 @@ addOne = foldTree (\x -> (Leaf (x+1))) Fork
 
 rectangle :: Int -> Int -> IO ()
 rectangle x y =
+  if y == 0 then return() -- 结束
+  else do
+    --replicate :: Int -> a -> [a]   (in List)
+    putStrLn (replicate x '*')
+    rectangle x (y-1)
 
 square :: Int -> IO ()
 square d = rectangle d d
@@ -54,10 +59,65 @@ square d = rectangle d d
 -- * Trapezoids and Triangles
 -- ----------------------------------------------------------------------------
 
-
 trapezoid :: Int -> Int -> IO ()
-trapezoid = error "not implemented"
+trapezoid top height
+  | height <= 0 = return ()
+  | otherwise = do
+      putStr (replicate (height -1) ' ')
+      putStrLn (replicate top '*')
+      trapezoid (top + 2) (height - 1)
 
 triangle :: Int -> IO ()
-triangle = error "not implemented"
+triangle h = trapezoid 1 h
 
+--------------------------calculator--------------------------
+data State =
+      Init
+    | Num Int
+    | Add Int
+    | Sub Int
+    deriving (Eq, Show)
+
+repr :: State -> String
+repr Init = []
+repr (Num i) = show i
+repr (Add i) = show i ++ " +"
+repr (Sub i) = show i ++ " -"
+
+isNat :: String -> Bool
+isNat = all isDigit
+
+isInt :: String -> Bool
+isInt [] = False
+isInt (x:xs) =
+  if x == '-' --negative number
+  then isNat xs && length xs > 0
+  else isNat (x:xs)
+
+transition :: State -> String -> State
+transition _ "reset" = Init
+transition (Add n) s =
+  if isInt s then (Num ((read s)+n)) --read : Converting strings to values.
+  else if s=="-" then (Sub n)
+  else (Add n)
+transition (Sub n) s =
+  if isInt s then (Num (n-(read s)))
+  else if s=="+" then (Add n)
+  else (Sub n)
+transition Init s =
+  if isInt s then (Num (read s))
+  else Init
+transition (Num n) s =
+  if s == "-" then (Sub n)
+  else if s == "+" then (Add n)
+  else if isInt s then (Num (read s))
+  else (Num n)
+
+calculator :: IO ()
+calculator = readWhile Init where
+  readWhile::State -> IO ()
+  readWhile state = do
+    putStrLn (repr state)
+    input <- getLine
+    if input=="exit" then putStrLn "end..."
+    else readWhile (transition state input)
