@@ -61,7 +61,31 @@ The readIO function is similar to read except that it signals parse failure to t
 The readLn function combines getLine and readIO.
 
 ------------tips-----------
-
+show :: Show a => a -> String
 anything -> String :   show a
+
+read :: Read a => String -> a
 String   -> Values :   read s
 
+--------------monad------------------
+(>>=) :: forall a b. m a -> (a -> m b) -> m b
+Sequentially compose two actions, passing any value produced by the first as an argument to the second.
+
+(>>) :: forall a b. m a -> m b -> m b
+Sequentially compose two actions, discarding any value produced by the first, like sequencing operators (such as the semicolon) in imperative languages.
+
+replicateM :: Monad m => Int -> m a -> m [a]
+replicateM n act : performs the action n times, gathering the results.
+
+replicateM_ :: Monad m => Int -> m a -> m ()
+Like replicateM, but discards the result.
+
+-- | Promote a function to a monad.
+liftM   :: (Monad m) => (a1 -> r) -> m a1 -> m r
+liftM f m1              = do { x1 <- m1; return (f x1) }
+
+-- | The 'join' function is the conventional monad join operator. It is used to
+-- remove one level of monadic structure, projecting its bound argument into the
+-- outer level.
+join              :: (Monad m) => m (m a) -> m a
+join x            =  x >>= id

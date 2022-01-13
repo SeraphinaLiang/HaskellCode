@@ -13,7 +13,7 @@ prog0b = putStrLn (show "your name")
          -- print "your name"
 
 -- 1.a  Write an IO program which will first read a positive
---      integer, say n, and then reads n integers and writes 
+--      integer, say n, and then reads n integers and writes
 --      their sum.
 
 p = do l <- getLine -- getLine :: IO String
@@ -21,7 +21,7 @@ p = do l <- getLine -- getLine :: IO String
        return n
 
 prog1a :: IO ()
-prog1a = 
+prog1a =
   do n <- readLn -- readLn :: Read a => IO a
      vs <- replicateM n readLn -- replicateM :: Int -> ...
      print (sum vs)
@@ -32,16 +32,16 @@ prog1a =
 --           (where type FilePath = String)
 --        lines  :: String -> [String]
 
-prog1b = 
+prog1b =
   do ls <- readFile "data.txt"
-     let (n:ns) = map read (lines ls) :: [Int]
+     let (n:ns) = map read (lines ls) :: [Int] -- (map read (lines ls)) return [Int]
      print (sum (take n ns))
 
 -- 1.c  Modify the  program to write the sum to a file.
 --      Use the predefined function:
 --        writeFile :: FilePath -> String -> IO ()
 
-prog1c = 
+prog1c =
   do ls <- readFile "data.txt"
      let (n:ns) = map read (lines ls) :: [Int]
      writeFile "sum.txt" (show (sum (take n ns)))
@@ -50,12 +50,12 @@ prog1c =
 --     The user thinks of a number and the game guesses it
 --     in a number of attempts.
 --
---      Main> game 
---      Think of a number between 1 and 100! 
---      Is it 50? higher 
---      Is it 75? lower 
---      Is it 62? lower 
---      Is it 56? yes 
+--      Main> game
+--      Think of a number between 1 and 100!
+--      Is it 50? higher
+--      Is it 75? lower
+--      Is it 62? lower
+--      Is it 56? yes
 --      Great, I won!
 
 game :: IO ()
@@ -69,26 +69,26 @@ game :: IO ()
  --   yes    -> victory dance, stop
 game =
   do
-     putStrLn "Think of a number between 1 and 100!" 
+     putStrLn "Think of a number between 1 and 100!"
      loop 1 100
      putStrLn "Great, I won!"
 
 loop :: Int -> Int -> IO ()
-loop l u = 
-  do let m = (l + u) `div` 2 
+loop l u =
+  do let m = (l + u) `div` 2
      putStr ("Is it " ++ show m ++ "? ")
      answer <- getLine
      case answer of
        "higher" -> loop (m+1) u
        "lower"  -> loop l (m-1)
        "yes"    -> return ()
-       _        -> do putStrLn "Please try again." 
+       _        -> do putStrLn "Please try again."
                       loop l u
 
 -- 2.b Invert the game: the program thinks of a number
 --     between 1 and 100, and the user guesses it.
---     
---     Import System.Random and use 
+--
+--     Import System.Random and use
 --       randomRIO :: (Int,Int) -> IO Int
 --     to get a random integer in the given range.
 --
@@ -101,14 +101,14 @@ loop l u =
 
 game2 :: IO ()
 game2 =
-  do n <- randomRIO (1,100) 
+  do n <- randomRIO (1,100)
      c <- loop n 1
      putStrLn ("Congratulations, you have finally, after " ++ show c ++ " attempts, guessed my number.")
   where
     loop :: Int -> Int -> IO Int
     loop n c =
       do putStr "What is your guess? "
-         guess <- readLn 
+         guess <- readLn
          case compare n guess of
            LT  -> putStrLn "lower" >> loop n (c+1)
            EQ  -> return c

@@ -1,18 +1,18 @@
 -- 1. Implemented isSorted for foldables using foldMap.
 --    This makes it *modular*.
 --
---    a. Invent an appropriate datatype 
+--    a. Invent an appropriate datatype
 --       that's a semigroup and monoid
 --
---    b. Use foldMap, mapping elements 
---       to the datatype, 
+--    b. Use foldMap, mapping elements
+--       to the datatype,
 --       and convert the result to a Bool.
-
+------------------------------------------------没看懂，网恢复了看看网课
 isSorted :: Ord a => [a] -> Bool
 isSorted l = postProcess (foldMap toM l)
 
 toM :: a -> M a
-toM x = Sorted x x 
+toM x = Sorted x x
 
 data M a = Sorted a a | NotSorted | SortedEmpty
 
@@ -25,7 +25,7 @@ instance Ord a => Semigroup (M a) where
   _        <> NotSorted = NotSorted
   SortedEmpty <> s      = s
   s <> SortedEmpty      = s
-  Sorted l1 u1 <> Sorted l2 u2 
+  Sorted l1 u1 <> Sorted l2 u2
     | u1 <= l2  = Sorted l1 u2
     | otherwise = NotSorted
 
@@ -35,9 +35,9 @@ instance Ord a => Monoid (M a) where
 -- 2. Work on the former *Fractals* exam question.
 
 data Turtle
-  = Empty 
+  = Empty
   | Turn Double Turtle
-  | Step Double Turtle 
+  | Step Double Turtle
 
 done :: Turtle
 done = Empty
@@ -55,14 +55,14 @@ Turn a p >>> q = Turn a (p >>> q)
 Step d p >>> q = Step d (p >>> q)
 
 square :: Turtle
-square = 
+square =
 {-
   step 50 >>> turn 90 >>>
   step 50 >>> turn 90 >>>
   step 50 >>> turn 90 >>>
   step 50
 -}
-  foldr (>>>) done (replicate 4 (step 50 >>> turn 90)) 
+  foldr (>>>) done (replicate 4 (step 50 >>> turn 90))
 
 
 type Point = (Double,Double)
@@ -75,9 +75,9 @@ turtleToLines :: Turtle ->  [Line]
 turtleToLines p = go p (S (500,500) 0)
   where
     go :: Turtle -> State -> [Line]
-    go Empty s             
+    go Empty s
       = []
-    go (Turn a q) (S p o) 
+    go (Turn a q) (S p o)
       = go q (S p (o + a))
     go (Step d q) (S (x1,y1) o)
       = ((x1,y1),(x2,y2)) : go q (S (x2,y2) o)
@@ -91,7 +91,7 @@ linesToSVG ls =
   unlines (header : map lineToSVG ls ++  [footer])
   where
     header = "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">"
-    footer = "</svg>" 
+    footer = "</svg>"
     lineToSVG ((x1,y1),(x2,y2)) =
       "<line x1=\"" ++ show x1 ++ "\" y1=\"" ++ show y1 ++
          "\" x2=\"" ++ show x2 ++ "\" y2=\"" ++ show y2 ++
@@ -102,9 +102,9 @@ writeSVG :: FilePath -> Turtle -> IO ()
 writeSVG fp = writeFile fp . linesToSVG . turtleToLines
 
 data Fractal
-  = FEmpty 
+  = FEmpty
   | FTurn Double Fractal
-  | FStep Fractal 
+  | FStep Fractal
 
 fdone :: Fractal
 fdone = FEmpty

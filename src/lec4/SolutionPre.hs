@@ -30,3 +30,4 @@ prog2 = do
 index :: [IO a] -> IO Int -> IO a
 index a = join . liftM (a !!)
 
+

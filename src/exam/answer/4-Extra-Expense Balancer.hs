@@ -1,6 +1,5 @@
 module MyhaskellSolution where
 
-
 -------------------------------------------------------------------------------
 -- PART I: Expense & Delta
 
@@ -47,7 +46,7 @@ deltaAmount :: Delta -> Double
 deltaAmount = exp_amount . unDelta
 
 -- | Convert a list of Expenses to a list of Deltas
--- The deltas are with respect to the average expense. 
+-- The deltas are with respect to the average expense.
 toDeltas :: [Expense] -> [Delta]
 toDeltas expenses =
   let (total,n) = foldr plusSum (0,0) expenses
@@ -111,7 +110,7 @@ balanced expenses epsilon =
 
 -- | Epsilon-balance a list of Deltas.
 balanceDeltas :: [Delta] -> Double -> [Transfer]
-balanceDeltas deltas epsilon = 
+balanceDeltas deltas epsilon =
   let payee    = maximum deltas
       payer    = minimum deltas
       amount   = min (abs (deltaAmount payee)) (abs (deltaAmount payer))
@@ -144,13 +143,14 @@ getExpense = do
 getExpenses :: IO [Expense]
 getExpenses = do
   me <- getExpense
-  case me of 
+  case me of
     Nothing -> return []
-    Just e  -> fmap (e:) getExpenses
+    Just e  -> fmap (e:) getExpenses    --fmap :: (a -> b) -> f a -> f b
+                                        -- The instances of Functor for lists, Maybe and IO satisfy these laws.
 
 -- | Print a list of transfers, each on a separate line
 printTransfers :: [Transfer] -> IO ()
-printTransfers = mapM_ print
+printTransfers = mapM_ print  --mapM_ :: Monad m => (a -> m b) -> [a] -> m ()  Basic Monad functions
 
 -- | Read a list of Expenses, balance them, and print the required transfers.
 balanceIO :: IO ()
