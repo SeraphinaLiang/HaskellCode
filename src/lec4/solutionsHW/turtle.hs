@@ -89,24 +89,24 @@ linesToSVG :: [Line] -> String
 linesToSVG ls =
   unlines (
     ("<svg viewBox = " ++ viewBox ++ " xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">") : draw ls ++ ["</svg>"]
-  ) where 
+  ) where
       draw :: [Line] -> [String]
       draw = map go where
-        go ((x1,y1),(x2,y2))  = 
-          "<line x1=\"" ++ 
-          show x1 ++ 
-          "\" y1=\"" ++ 
-          show y1 ++ 
-          "\" x2=\"" ++ 
-          show x2 ++ 
-          "\" y2=\"" ++ 
-          show y2 ++ 
+        go ((x1,y1),(x2,y2))  =
+          "<line x1=\"" ++
+          show x1 ++
+          "\" y1=\"" ++
+          show y1 ++
+          "\" x2=\"" ++
+          show x2 ++
+          "\" y2=\"" ++
+          show y2 ++
           "\" stroke=\"blue\" stroke-width=\"4\" />"
 
       viewBox = show $ unwords $ map show [x1, y1, x2-x1, y2-y1]
         where ((x1,y1),(x2,y2)) = boundingBox ls
 
-          
+
 
 -- Write SVG File
 -- ~~~~~~~~~~~~~~
@@ -150,17 +150,17 @@ koch :: Fractal
 koch = fstep >-> fturn (-120) >-> fstep >-> fturn (-120) >-> fstep
 
 fsquare :: Fractal
-fsquare 
+fsquare
   =  fstep    >->
      fturn 90 >->
      fstep    >->
      fturn 90 >->
      fstep    >->
      fturn 90 >->
-     fstep   
+     fstep
 
 triangle :: Fractal
-triangle 
+triangle
   = fstep >-> fturn (-120) >-> fstep >-> fturn (-120) >-> fstep
 
 -- Convert Fractal to Turtle Program
@@ -248,7 +248,6 @@ dashedStep nDashes dist
 
   | otherwise
   = step dist
-
 
 dash :: Int -> Turtle -> Turtle
 dash n t = go True t

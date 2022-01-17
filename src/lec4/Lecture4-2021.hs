@@ -1,4 +1,3 @@
-import System.Random
 import Control.Monad (replicateM)
 
 -- 0.a  Write a program that prints the number 5.
@@ -99,6 +98,7 @@ loop l u =
 -- What is your guess? 75
 -- Congratulations, you have finally, after many attempts, guessed my number.
 
+{-
 game2 :: IO ()
 game2 =
   do n <- randomRIO (1,100)
@@ -113,3 +113,4 @@ game2 =
            LT  -> putStrLn "lower" >> loop n (c+1)
            EQ  -> return c
            GT  -> putStrLn "higher" >> loop n (c+1)
+-}

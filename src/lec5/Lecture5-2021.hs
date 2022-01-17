@@ -8,6 +8,8 @@
 --       to the datatype,
 --       and convert the result to a Bool.
 ------------------------------------------------没看懂，网恢复了看看网课
+import Control.Monad
+
 isSorted :: Ord a => [a] -> Bool
 isSorted l = postProcess (foldMap toM l)
 
@@ -112,8 +114,8 @@ fdone = FEmpty
 fturn :: Double -> Fractal
 fturn a = FTurn a fdone
 
-fstep :: Double -> Fractal
-fstep d = FStep fdone
+fstep :: Fractal
+fstep = FStep fdone
 
 (>->) :: Fractal -> Fractal -> Fractal
 FEmpty >-> q    = q
@@ -134,5 +136,12 @@ refine exp (FStep p)    = exp >-> refine exp p
 -- HOMEWORK:
 -- finish the assignment
 
+times :: Int -> (a -> a) -> (a -> a)
+times 0 f = f
+times n f = f. times (n-1) f
+
+
+exam :: Fractal -> Fractal -> Int -> Double -> FilePath -> IO ()
+exam program expansion n d filename = writeSVG (filename++".svg") $ concretize d $ (times n (refine expansion)) program
 
 

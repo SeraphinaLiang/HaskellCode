@@ -50,3 +50,4 @@ instance Evaluatable Exp where
   eval (Const b)   = eval b
   eval (And e1 e2) = eval e1 && eval e2
   eval (Or e1 e2)  = eval e1 || eval e2
+

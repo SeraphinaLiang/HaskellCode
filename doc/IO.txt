@@ -25,14 +25,13 @@ Read a character from the standard input device (same as hGetChar stdin).
 2.    getLine :: IO String
 Read a line from the standard input device (same as hGetLine stdin).
 
-3.    getContents :: IO String
-The getContents operation returns all user input as a single string,
-which is read lazily as it is needed (same as hGetContents stdin).
+3.    readLn :: Read a => IO a
+The readLn function combines getLine and readIO.
 
-4.    interact :: (String -> String) -> IO ()
-The interact function takes a function of type String->String as its argument.
-The entire input from the standard input device is passed to this function as its argument,
-and the resulting string is output on the standard output device.
+4.    readIO :: Read a => String -> IO a
+The readIO function is similar to read
+except that it signals parse failure to the IO monad instead of terminating the program.
+
 
 ----------------Files------------------
 
@@ -54,18 +53,15 @@ Note that writeFile and appendFile write a literal string to a file.
 To write a value of any printable type, as with print, use the show function to convert the value to a string first.
 main = appendFile "squares" (show [(x,x*x) | x <- [0,0.1..2]])
 
-5.    readIO :: Read a => String -> IO a
-The readIO function is similar to read except that it signals parse failure to the IO monad instead of terminating the program.
-
-6.    readLn :: Read a => IO a
-The readLn function combines getLine and readIO.
-
 ------------tips-----------
 show :: Show a => a -> String
 anything -> String :   show a
 
 read :: Read a => String -> a
 String   -> Values :   read s
+
+read :: Read a => String -> aSource
+The read function reads input from a string, which must be completely consumed by the input process.
 
 --------------monad------------------
 (>>=) :: forall a b. m a -> (a -> m b) -> m b

@@ -2,6 +2,7 @@ module Template where
 
 -- Turtle Graphics Programs
 -- ~~~~~~~~~~~~~~~~~~~~~~~~
+import Control.Monad
 
 type Angle  = Double
 
@@ -33,7 +34,8 @@ step d  =  Step d done
 Done      >>> t  =  t
 Turn a r  >>> t  =  Turn a  (r >>> t)
 Step d r  >>> t  =  Step d  (r >>> t)
-_         >>> _  = error "Please complete me"
+PenUp  r  >>> t  =  PenUp (r >>> t)
+PenDown  r >>> t =  PenDown (r >>> t)
 
 square :: Turtle
 square
@@ -54,13 +56,15 @@ type Line = (Point,Point)
 
 turtleToLines :: Turtle -> [Line]
 turtleToLines prog = go prog state where
-  state = (0.0,(500.0,500.0))
-
-  go :: Turtle -> (Angle,Point) -> [Line]
+  state = (0.0,(500.0,500.0),True)
+  go :: Turtle -> (Angle,Point,Bool) -> [Line]
   go Done       _               =  []
-  go (Turn a k) (b,p)       =  go k (a+b,p)
-  go (Step d k) (a,p@(x,y)) =  (p,p') : go k (a,p') where
-    p'  =  (x + d * sin (a * pi / 180) , y + d * cos (a * pi / 180))
+  go (Turn a k) (b,p,pos)         =  go k (a+b,p,pos)
+  go (Step d k) (a,p@(x,y),pos) = if pos == False then go k (a,p',pos) else (p,p') : go k (a,p',pos)
+    where
+      p'  =  (x + d * sin (a * pi / 180) , y + d * cos (a * pi / 180))
+  go (PenUp r) (b,p,pos) = go r (b,p,False)
+  go (PenDown r) (b,p,pos) = go r (b,p,True)
 
 -- Convert Lines to SVG string representation
 -- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -190,19 +194,28 @@ boundingBox l = (pmin,pmax) where
 type Animation = [Turtle]
 
 animate :: Turtle -> Animation
-animate = error "not implemented"
+animate turtle =reverse $ (stepin turtle True) where
+  stepin (Step d pro) state = if state == True then (Step d pro) : stepin pro state else stepin pro state
+  stepin (Turn a pro) state = stepin pro state
+  stepin Done _ = []
+  stepin (PenUp pro) state = stepin pro False
+  stepin (PenDown pro) state = stepin pro True
 
 -- Discontinuous drawing
 -- ~~~~~~~~~~~~~~~~~~~~~
 
 penUp :: Turtle
-penUp = error "not implemented"
+penUp = PenUp done
 
 penDown :: Turtle
-penDown = error "not implemented"
+penDown = PenDown done
 
 dashedStep :: Int -> Dist -> Turtle
-dashedStep = error "not implemented"
+dashedStep n d = t
+  where
+    t = foldr (>>>) dash (replicate (n-1) dash)
+    dash = penDown >>> step len >>> penUp >>> step len
+    len =  d / (fromIntegral (2*n -1))
 
 dash :: Int -> Turtle -> Turtle
 dash = error "not implemented"
