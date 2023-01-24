@@ -125,10 +125,14 @@ insert (x:xs) y
   | x < y      =  x : insert xs y
   | otherwise  =  y : x : xs
 
+
 insert' :: [Int]->Int ->[Int]
 insert' i l= foldr' f [i] l where
   f::Int->[Int]->[Int]
-  f x xs | x<i = x:f i xs | otherwise = i : x : xs
+  f x xs
+    | x<i = x:f i xs
+    | otherwise = i : x : xs
+
 
 --    b. Propose a generarlization of foldr that
 --       allows writing insert.

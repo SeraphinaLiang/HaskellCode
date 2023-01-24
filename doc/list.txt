@@ -63,8 +63,6 @@ foldr k z = go
             go []     = z
             go (y:ys) = y `k` go ys
 
-
-
 concat :: [[a]] -> [a]
 Concatenate a list of lists.
 

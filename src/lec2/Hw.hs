@@ -205,7 +205,8 @@ execute _ _ = runtimeError
 
 run :: Prog -> Stack -> Stack
 run [] n = n
-run (i:is) n = run is newN where newN = execute i n
+run (i:is) n = run is newN
+  where newN = execute i n
 
 compile :: Exp -> Prog
 compile (Add e1 e2) = ((compile e1)++(compile e2)++[IAdd])

@@ -214,5 +214,179 @@ Thomas -> Tom:103.375
 
 -}
 
+-------------------------new version------------------------------------------------------
+module Myhaskell where
+
+
+-------------------------------------------------------------------------------
+-- PART I: Expense & Delta
+
+-- IMPORTANT: MAKE SURE THE AMOUNT COMES BEFORE THE NAME
+data Expense = Expense Double String deriving (Eq,Ord)
+
+mkExpense :: String -> Double -> Expense
+mkExpense n a = (Expense a n)
+
+instance Show Expense where
+  show (Expense a n) =  n++": "++ show a
+
+data Delta = Delta Expense deriving (Eq,Ord)
+
+instance Show Delta where
+  show (Delta e) = show e
+
+fromExpense :: Double -> Expense -> Delta
+fromExpense avg (Expense amount name)= Delta (Expense (amount-avg) name)
+
+mkDelta :: String -> Double -> Delta
+mkDelta name amount = fromExpense 0 (mkExpense name amount)
+
+-- | Convert a list of Expenses to a list of Deltas
+-- The deltas are with respect to the average expense.
+toDeltas :: [Expense] -> [Delta]
+toDeltas list = result where
+  -- lamda expression 传入参数外不要包括号，用空格隔开
+  avg = (foldr (\li r -> getamount li + r) 0.0 list) / (fromIntegral $ length list)
+
+  -- g item r = (getamount item) + r
+  --total =  foldr (+) 0.0 (map getamount list)
+  --len = fromIntegral $ length list
+  --avg = total/len
+  f n a= fromExpense avg (mkExpense n a)
+  result = map (\(Expense amount name)->f name amount) list
+  getamount (Expense am _) = am
+
+-------------------------------------------------------------------------------
+-- PART II: Transferable Transfers
+
+-- | The Transfer datatype: a money transfer from one person to another.
+data Transfer = MkTransfer String String Double deriving Eq
+
+trans_from :: Transfer -> String
+trans_from (MkTransfer from _ _) = from
+
+trans_to :: Transfer -> String
+trans_to (MkTransfer _ to _) = to
+
+trans_amount :: Transfer -> Double
+trans_amount (MkTransfer _ _ amount) = amount
+
+instance Show Transfer where
+  show (MkTransfer from to amount) = from ++ " -> " ++ to ++ ":" ++ show amount
+
+-- | The Transferable class contains types t to which a transfer can be applied,
+-- and that can create a Transfer from one t to another t
+class Transferable t where
+  applyTransfer  :: Transfer -> t -> t
+
+-- | Apply a list of Transfers to to a Transferable from left to right.
+applyTransfers :: Transferable t => [Transfer] -> t -> t
+applyTransfers transfers x = foldl (flip applyTransfer) x transfers
+
+instance Transferable Expense where
+  applyTransfer (MkTransfer from to amount) (Expense origin name) =
+    if from == to then (Expense origin name)
+    else if amount == 0 then (Expense origin name)
+    else if from == name then (Expense (origin+amount) name)
+    else if to == name then (Expense (origin-amount) name)
+    else (Expense origin name)
+
+
+instance Transferable Delta where
+  applyTransfer (MkTransfer from to amount) (Delta (Expense origin name)) =
+    if from == to then (Delta (Expense origin name))
+    else if amount == 0 then (Delta (Expense origin name))
+    else if from == name then (Delta (Expense (origin+amount) name))
+    else if to == name then (Delta (Expense (origin-amount) name))
+    else (Delta (Expense origin name))
+
+createTransfer :: Double -> Delta -> Delta -> Transfer
+createTransfer amount (Delta (Expense _ n1)) (Delta (Expense _ n2)) = (MkTransfer n1 n2 amount)
+
+-------------------------------------------------------------------------------
+-- PART III: Balancing Expenses
+
+-- | Check if a list of expenses is epsilon-balanced.
+balanced :: [Expense] -> Double -> Bool
+balanced [] _ = True
+balanced [x] _ = True
+balanced (x:y:ls) precise = bal x y && balanced (y:ls) precise where
+  bal (Expense m1 _) (Expense m2 _) = abs(m1-m2) < precise
+
+-- | Epsilon-balance a list of Deltas.
+balanceDeltas :: [Delta] -> Double -> [Transfer]
+balanceDeltas dels precise = result where
+  d1 = maximum dels
+  big = getamount d1
+  d2 = minimum dels
+  small = getamount d2
+  diff = big - small
+  tran_amount = if  diff <= abs(small) && diff <= abs(big) then diff
+                else if abs(small) >= abs(big) then abs(big)
+                else abs(small)
+  t1 = createTransfer tran_amount d2 d1
+  newDel = map (applyTransfer t1) dels
+  getamount (Delta (Expense m _)) = m
+
+  result =
+    if diff <= precise then []
+    else t1 : balanceDeltas newDel precise
+
+
+-- | Epsilon-balance a list of Expenses.
+balance :: [Expense] -> Double -> [Transfer]
+balance le precise = balanceDeltas (toDeltas le) precise
+
+
+-------------------------------------------------------------------------------
+-- PART IV: Application
+
+-- | Read a list of expenses.
+-- If the entered amount is non-negative, the list is terminated.
+getExpenses :: IO [Expense]
+getExpenses = do
+  expense <- getExpense
+  case expense of
+    Nothing -> return []
+    (Just ex) -> fmap (ex:) getExpenses
+
+getExpense :: IO (Maybe Expense)
+getExpense = do
+  putStr "Name: "
+  name <- getLine
+  putStr "Amount: "
+  amount <- readLn :: IO Double
+  if amount < 0 then return Nothing
+  else return (Just (mkExpense name amount))
+
+
+-- | Print a list of transfers, each on a separate line
+printTransfers :: [Transfer] -> IO ()
+printTransfers list = mapM_ print list
+
+-- | Read a list of Expenses, balance them, and print the required transfers.
+balanceIO :: IO ()
+balanceIO = do
+  expenses <- getExpenses
+  let transfer = balance expenses 0.01
+  putStrLn " "
+  printTransfers transfer
+
+{- Example:
+
+> balanceIO
+Name: Alex
+Amount: 200
+Name: Tom
+Amount: 1000
+Name: Thomas
+Amount: 275.5
+Name:
+Amount: 0
+Gert-Jan -> Tom:338.875
+Alex -> Tom:178.875
+Thomas -> Tom:103.375
+
+-}
 
 

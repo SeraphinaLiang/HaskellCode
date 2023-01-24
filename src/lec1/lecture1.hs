@@ -7,7 +7,7 @@ add (x:xs) = x + add xs
 
 add' l
   | null l  = 0
-  | otherwise = head l + add (tail l)
+  | otherwise = head l + add' (tail l)
 
 
 -- 2. write a function that counts the number of elements in a list of integers
@@ -85,7 +85,6 @@ isort []      =  []
 isort (x:xs)  =  insert (isort xs) x
 
 -- 5a. write a function to split a list in two halves
---
 
 split :: [Int] -> ([Int],[Int])
 split []     = ([],[])
@@ -120,7 +119,9 @@ merge (x:xs) (y:ys)
 mergesort::[Int]->[Int]
 mergesort [] = []
 mergesort [x] = [x]
-mergesort l = let (left,right) = split l in merge (mergesort left) (mergesort right)
+mergesort l =
+  let (left,right) = split l
+  in merge (mergesort left) (mergesort right)
 
 -- 6a. create a datatype for representing binary trees where
 --     only the leaves carry integer values
